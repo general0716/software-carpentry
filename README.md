@@ -35,14 +35,17 @@ This script can solve puzzles really fast (less than 2 minute for each level).
 
 **White Block**: Reflective block  
 **Black Block**: Opaque block  
-**Red Block**: Refractive block  
+**Green Block**: Refractive block  
 **Lighter Gray Block**: The location where the block can be placed  
 **Darker Gray Block**: The location where the block cannot be placed.  
-**Hollow Red Circle**: The end point the laser needs to pass.  
-**Solid Red Circle**: The place where the laser is emitted.  
-**Red Line**: The optical path of the laser.  
+
+
 
 ## How does the code work?
 
 In detail, the code begins by extracting the grid layout, block counts, laser starting points and directions, and the target points from the input bff file. It then “expands” the small grid into a full grid that accounts for half-step movements required for laser simulation. Next, it simulates the laser trajectories, applying reflections and refractions depending on the type of block encountered, using helper functions that decide how the beam changes direction. Finally, it systematically generates all candidate placements of movable blocks by considering every permutation of block types over available positions, checks for a configuration where every target point is hit by some laser path, and, if found, draws and saves an image of the solved puzzle.
+
+The solved puzzle will look like this
+
+![1231744128194_ pic](https://github.com/user-attachments/assets/1f72e84e-8b26-4171-a3ab-6684b5043ddb)
 
