@@ -115,56 +115,67 @@ def calculate_interaction(block_type, direction, collision_point):
     x, y = collision_point
 
     if block_type == 'A':  # 反射块
-        if x % 2 == 0 and y % 2 == 1:
+        # 只反射，不穿透
+        if x % 2 == 0:  # 垂直反射面（左右两侧）
             return [(-dx, dy)]
-        elif x % 2 == 1 and y % 2 == 0:
+        else:  # 水平反射面（上下两侧）
             return [(dx, -dy)]
-        else:
-            return []
+
 
     elif block_type == 'B':  # 阻挡块
-        return []
+        return []  # 完全阻断
 
     elif block_type == 'C':  # 折射块
-        if x % 2 == 0 and y % 2 == 1:
-            return [(dx, dy), (-dx, dy)]
-        elif x % 2 == 1 and y % 2 == 0:
+        # 同时透过 + 反射
+        if x % 2 == 0:  # 垂直折射
+            return [(dx, dy), (-dx, dy)]  # 原方向+反射
+        else:  # 水平折射
             return [(dx, dy), (dx, -dy)]
-        else:
-            return [(dx, dy)]
 
     return [direction]
 
 
-def trace_laser(grid, start_pos, start_dir, max_reflections=50):
+def trace_laser(grid, start_pos, start_dir, max_reflections=100):
     path = []
     visited = set()
     queue = [(start_pos, start_dir)]
-    step_counter = 0  # 用于路径编号
+
+    height = len(grid)
+    width = len(grid[0])
+
+    def get_block_at_pos(pos, direction):
+        x, y = pos
+        dx, dy = direction
+        if x % 2 == 0:
+            return grid[y // 2][(x + dx) // 2] if 0 <= y // 2 < height and 0 <= (x + dx) // 2 < width else None
+        else:
+            return grid[(y + dy) // 2][x // 2] if 0 <= (y + dy) // 2 < height and 0 <= x // 2 < width else None
 
     while queue and len(visited) < max_reflections:
-        pos, dir = queue.pop(0)
-        if (pos, dir) in visited:
+        (x, y), (dx, dy) = queue.pop(0)
+
+        if ((x, y), (dx, dy)) in visited:
             continue
-        visited.add((pos, dir))
+        visited.add(((x, y), (dx, dy)))
 
-        x, y = pos
-        dx, dy = dir
+        while 0 <= x < width * 2 and 0 <= y < height * 2:
+            path.append((x, y))
 
-        while True:
-            # 边界判断，若越界则立即终止该路径
-            if x < 0 or y < 0 or x >= len(grid[0]) * 2 or y >= len(grid) * 2:
-                break
+            block = get_block_at_pos((x, y), (dx, dy))
 
-            path.append(((x, y), step_counter))
-            step_counter += 1
-            block = get_block(grid, (x, y))
-
-            if block in ['A', 'B', 'C']:
-                new_dirs = calculate_interaction(block, (dx, dy), (x, y))
-                for ndx, ndy in new_dirs:
-                    queue.append(((x + ndx, y + ndy), (ndx, ndy)))
-                break
+            if block == 'B':
+                break  # 阻挡块：终止
+            elif block == 'A':
+                if x % 2 == 0:
+                    dx *= -1
+                else:
+                    dy *= -1
+            elif block == 'C':
+                queue.append(((x + dx, y + dy), (dx, dy)))
+                if x % 2 == 0:
+                    dx *= -1
+                else:
+                    dy *= -1
 
             x += dx
             y += dy
@@ -173,10 +184,11 @@ def trace_laser(grid, start_pos, start_dir, max_reflections=50):
 
 
 
+
 # --------------------------
 # 穷举求解器
 # --------------------------
-def solve_with_bruteforce(data, max_attempts=100000):
+def solve_with_bruteforce(data, max_attempts=300000):
     grid = data['grid']
     targets = set(data['points'])
     lazors = data['lazors']
@@ -280,10 +292,10 @@ def visualize_solution(grid, data, save_path=None):
     for start, dir in data['lazors']:
         path = trace_laser(grid, start, dir)
         if path:
-            x = [p[0][0] / 2 for p in path]
-            y = [p[0][1] / 2 for p in path]
+            x = [p[0] / 2 for p in path]
+            y = [p[1] / 2 for p in path]
             ax.plot(x, y, 'r-', linewidth=2, alpha=0.7)
-            visualize_laser_path_with_steps(ax, path)  # ⬅ 添加路径编号
+            # visualize_laser_path_with_steps(ax, path)  # ⬅ 添加路径编号
 
     for (x, y), (dx, dy) in data['lazors']:
         ax.plot(x / 2, y / 2, 's', color='red', markersize=10, markeredgecolor='black')
@@ -325,7 +337,7 @@ def visualize_solution(grid, data, save_path=None):
 # --------------------------
 if __name__ == '__main__':
     INPUT_FILE = r"D:\\tool\\pycharm\\file\\Lazor Project\\bff_files\\mad_1.bff"
-    MAX_ATTEMPTS = 100000
+    MAX_ATTEMPTS = 200000
     OUTPUT_IMAGE = "solution.png"
 
     print("=== Lazor Puzzle Solver ===")
