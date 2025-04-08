@@ -202,5 +202,5 @@ def solve_lazor(file_path):
 
 # Run script from command line
 if __name__ == '__main__':
-    path = input("请输入 .bff 文件名（含扩展名）: ").strip()
+    path = input("Please enter the .bff filename (with extension): ").strip()
     solve_lazor(path)
