@@ -1,7 +1,7 @@
 # Lazor_Project
 This is a project aiming at solving different levels of the game 'LAZOR'
 ## Background
-Lazor is a popular puzzle game in which you need to arrange blocks to let the laser pass though the desire targets. You can get this game on App Store. The difficulty of each level is labelled in the game, and in specific, we will solve these levels: dark_1, mad_1, mad_4, mad_7, numbered_6, showstopper_4, tiny_5, and yarn_5. 
+Lazor is a popular puzzle game in which you need to arrange blocks to let the laser pass though the desire targets. You can get this game from App Store. The difficulty of each level is labelled in the game, and in specific, we will solve these levels: dark_1, mad_1, mad_4, mad_7, numbered_6, showstopper_4, tiny_5, and yarn_5. 
 
 ## How to use it?
 Get the .bff file of the level you want to play and read it in the code to solve. A standard .bff should look like this:  
