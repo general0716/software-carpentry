@@ -1,5 +1,5 @@
 import unittest
-import lazor_project_final
+import lazors
 
 
 class TestStringMethods(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestStringMethods(unittest.TestCase):
         C_blocks = 1
         lazorlist = [[2, 7, 1, -1]]
         holelist = [[3, 0], [4, 3], [2, 5], [4, 7]]
-        self.assertEqual(lazor_project_final.read_bff(
+        self.assertEqual(lazors.read_bff(
             'mad_1.bff'), (fullgrid, A_blocks, B_blocks, C_blocks, lazorlist, holelist, grid))
 
     def test_solve(self):
